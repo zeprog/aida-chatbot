@@ -23,13 +23,17 @@ def runVkBot():
       user_id = msg['from_id']
       text = msg['text']
       
+      members = vk_session.method('messages.getConversationMembers', {
+        'peer_id': msg['peer_id']
+      })
+      
       # the remaining logic goes here
       
       if user_id in map(int, admin_keys):
         if 'кик' in text:
-          handle_kick(vk_session, msg, admin_keys)
+          handle_kick(vk_session, msg, admin_keys, members)
         elif 'пред' in text:
-          handle_warn(vk_session, msg, admin_keys)
+          handle_warn(vk_session, msg, admin_keys, members)
       else:
         vk_session.method('messages.send', {
           'chat_id': msg['peer_id'] - 2000000000,
