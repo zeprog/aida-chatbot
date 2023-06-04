@@ -3,6 +3,7 @@ import utils
 from models import User
 from config import *
 
+### KICK
 def kick_user(vk_session, msg, user_id):
   if int(user_id) > 0:
     vk_session.method('messages.removeChatUser', {

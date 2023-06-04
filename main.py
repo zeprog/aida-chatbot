@@ -2,7 +2,7 @@ import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from config import *
 from handlers.kick_handler.kick_handler import handle_kick
-from handlers.warns_handler.warns_handler import handle_warn
+from handlers.warns_handler.warns_handler import handle_warn, handle_remove_warn, handle_remove_warns
 
 class MyLongPoll(VkBotLongPoll):
   def listen(self):
@@ -30,9 +30,16 @@ def runVkBot():
       # the remaining logic goes here
       
       if user_id in map(int, admin_keys):
-        if 'кик' in text:
+        text_words = text.split()
+        print(text_words)
+        print('снять' in text_words and 'пред' in text_words)
+        if 'кик' in text_words:
           handle_kick(vk_session, msg, admin_keys, members)
-        elif 'пред' in text:
+        elif 'снять' in text_words and 'преды' in text_words:
+          handle_remove_warns(vk_session, msg, members)
+        elif 'снять' in text_words and 'пред' in text_words:
+          handle_remove_warn(vk_session, msg, members)
+        elif 'пред' in text_words:
           handle_warn(vk_session, msg, admin_keys, members)
       else:
         vk_session.method('messages.send', {
