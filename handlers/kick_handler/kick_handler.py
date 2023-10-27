@@ -1,7 +1,9 @@
 import re
 import utils
+import json
 from models import User
 from config import *
+from buttons import keyboard
 
 ### KICK
 def kick_user(vk_session, msg, user_id):
@@ -48,3 +50,31 @@ def handle_kick(vk_session, msg, admin_keys, members):
       'message': 'Вы не можете кикнуть самого себя!',
       'random_id': 0
     })
+    
+# САМОКИК
+def selfkick_answer(vk_session, msg):
+  vk_session.method('messages.send', {
+    'chat_id': msg['peer_id'] - 2000000000,
+    'message': 'Исключить члена экипажа?',
+    'random_id': 0,
+    'keyboard': keyboard,
+  })
+    
+def selfkick(vk_session, msg, event, user_id, kick_user):
+  print('В СЕЛФКИК')
+  if user_id not in map(int, admin_keys):
+    vk_session.method('messages.send', {
+      'chat_id': msg['peer_id'] - 2000000000,
+      'message': 'У вас нет уровня доступа для этих команд!',
+      'random_id': 0
+    })
+  else:
+    print(event.object['message']['payload'])
+    payload = json.loads(event.object['message']['payload'])
+    if payload.get('id') == '1':
+      vk_session.method('messages.removeChatUser', {
+        'user_id': kick_user,
+        'chat_id': msg['peer_id'] - 2000000000
+      })
+      utils.remove_user_by_id(kick_user)
+      User().delete_by_id(kick_user)
