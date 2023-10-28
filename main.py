@@ -26,11 +26,22 @@ def runVkBot():
       # print(msg)
       print(event)
       
+      members = vk_session.method('messages.getConversationMembers', {
+        'peer_id': msg['peer_id']
+      })
+      
       # САМОКИК
       if 'action' in event.object['message']:
         if event.object['message']['action']['type'] == 'chat_kick_user':
           kick_user = event.object['message']['from_id']
           selfkick_answer(vk_session, msg)
+        if event.object['message']['action']['type'] == 'chat_invite_user':
+          if int(event.object['message']['action']['member_id']) > 0:
+            for profile in members['profiles']:
+              utils.get_user_by_profile(profile)
+          else:
+            for group in members['groups']:
+              utils.get_user_by_profile(group)
       elif 'Исключить' in event.object['message']['text']:
         selfkick(vk_session, msg, event, user_id, kick_user)
       else:
@@ -53,9 +64,6 @@ def runVkBot():
           })
           continue
       
-      members = vk_session.method('messages.getConversationMembers', {
-        'peer_id': msg['peer_id']
-      })
       for profile in members['profiles']:
         if profile['id'] == user_id:
           utils.update_user_name(user_id, profile)
