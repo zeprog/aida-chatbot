@@ -31,3 +31,9 @@ def remove_user_by_id(user_id):
     return 'Пользователь успешно удален из базы данных!'
   except DoesNotExist:
     return 'Пользователь не найден в базе данных!'
+  
+### UPDATE
+def update_user_name(user_id, profile, is_group=False):
+  user = User.get(User.vk_id == user_id)
+  user.name = profile['name'] if is_group else profile['first_name'] + ' ' + profile['last_name']
+  user.save()

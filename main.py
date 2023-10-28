@@ -1,4 +1,5 @@
 import vk_api
+import utils
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from config import *
 from handlers.kick_handler.kick_handler import handle_kick, selfkick_answer, selfkick
@@ -55,6 +56,9 @@ def runVkBot():
       members = vk_session.method('messages.getConversationMembers', {
         'peer_id': msg['peer_id']
       })
+      for profile in members['profiles']:
+        if profile['id'] == user_id:
+          utils.update_user_name(user_id, profile)
 
 if __name__ == '__main__':
   runVkBot()

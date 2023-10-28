@@ -61,7 +61,6 @@ def selfkick_answer(vk_session, msg):
   })
     
 def selfkick(vk_session, msg, event, user_id, kick_user):
-  print('В СЕЛФКИК')
   if user_id not in map(int, admin_keys):
     vk_session.method('messages.send', {
       'chat_id': msg['peer_id'] - 2000000000,
@@ -69,7 +68,6 @@ def selfkick(vk_session, msg, event, user_id, kick_user):
       'random_id': 0
     })
   else:
-    print(event.object['message']['payload'])
     payload = json.loads(event.object['message']['payload'])
     if payload.get('id') == '1':
       vk_session.method('messages.removeChatUser', {
