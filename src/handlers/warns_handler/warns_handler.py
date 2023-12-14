@@ -1,7 +1,7 @@
 import re
-import src.utils as utils
-from src.config import *
-from src.models import User
+import utils as utils
+from config import *
+from models import User
 
 ### ADD WARN
 def warn_user(vk_session, msg, user_id, user_name):

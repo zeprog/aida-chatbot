@@ -1,26 +1,36 @@
 from peewee import DoesNotExist
-from src.models import User
+from models import User
 
-def create_user_or_group(profile, is_group=False):
+def create_users_or_groups(profile, is_group=False):
   User.create(
     vk_id=(-int(profile['id']) if is_group else profile['id']),
     warns=0,
     name=profile['name'] if is_group else profile['first_name'] + ' ' + profile['last_name']
   )
+
+def create_user_or_group(user_id, is_group=False):
+  pass 
   
 ### GET
 def get_user_by_profile(profile, is_group=False):
   try:
-    return User.get(User.vk_id == (-int(profile['id']) if is_group else profile['id']))
+    print((-int(profile['id']) if is_group else int(profile['id'])))
+    return User.get(User.vk_id == (-int(profile['id']) if is_group else int(profile['id'])))
   except DoesNotExist:
-    create_user_or_group(profile, is_group)
-    return User.get(User.vk_id == (-int(profile['id']) if is_group else profile['id']))
+    create_users_or_groups(profile, is_group)
+    return User.get(User.vk_id == (-int(profile['id']) if is_group else int(profile['id'])))
 
 def get_user_by_id(user_id):
   try:
     return User.get(User.vk_id == user_id)
   except DoesNotExist:
-    return 'User not found'
+    return None
+  
+def get_all_users():
+  try:
+    return User.get()
+  except DoesNotExist:
+    return None
 
 
 ### DELETE

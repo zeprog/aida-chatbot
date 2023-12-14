@@ -1,6 +1,6 @@
 from peewee import Model, SqliteDatabase, TextField, IntegerField
 
-db = SqliteDatabase('data.db')
+db = SqliteDatabase('src/data.db')
 
 class User(Model):
   """
