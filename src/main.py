@@ -1,18 +1,25 @@
 import vk_api
-import utils
+import src.utils as utils
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
-from config import *
-from handlers.kick_handler.kick_handler import handle_kick, selfkick_answer, selfkick
-from handlers.warns_handler.warns_handler import handle_warn, handle_remove_warn, handle_remove_warns
+from src.config import *
+from src.handlers.kick_handler.kick_handler import handle_kick, selfkick_answer, selfkick
+from src.handlers.warns_handler.warns_handler import handle_warn, handle_remove_warn, handle_remove_warns
+
+vk_session = vk_api.VkApi(token=token)
 
 class MyLongPoll(VkBotLongPoll):
+  def __init__(self, vk_session, group_id):
+    super().__init__(vk_session, group_id)
+    self.running = True  # Control the loop with this attribute
+
   def listen(self):
-    while True:
+    while self.running:
       try:
         for event in self.check():
           yield event
       except Exception as err:
         print(err)
+        break  # Optional: break on exception
 
 def handle_action_event(event, vk_session, msg, members):
   if event.object['message']['action']['type'] == 'chat_kick_user':

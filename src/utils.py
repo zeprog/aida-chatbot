@@ -1,5 +1,5 @@
 from peewee import DoesNotExist
-from models import User
+from src.models import User
 
 def create_user_or_group(profile, is_group=False):
   User.create(

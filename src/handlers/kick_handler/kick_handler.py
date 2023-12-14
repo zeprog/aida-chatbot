@@ -1,9 +1,9 @@
 import re
 import json
-from models import User
-from config import *
-from buttons import keyboard
-import utils
+from src.models import User
+from src.config import *
+from src.buttons import keyboard
+import src.utils as utils
 
 ### KICK
 def kick_user(vk_session, msg, user_id):

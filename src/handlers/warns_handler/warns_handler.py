@@ -1,7 +1,7 @@
 import re
-import utils
-from config import *
-from models import User
+import src.utils as utils
+from src.config import *
+from src.models import User
 
 ### ADD WARN
 def warn_user(vk_session, msg, user_id, user_name):
@@ -46,22 +46,30 @@ def handle_warn(vk_session, msg, admin_keys, members):
     for profile in members['profiles']:
       utils.get_user_by_profile(profile)
     warn_id = re.search(r'(?:id|club)(\d+)', msg['text'])
-    warn_id = warn_id.group(0)
-    warn_id_without_numbers = int(re.findall(r'\d+', warn_id)[0])
-    if int(warn_id_without_numbers) != int(msg['from_id']) and int(warn_id_without_numbers) not in admin_keys:
-      warn_user(vk_session, msg, warn_id_without_numbers, utils.get_user_by_id(warn_id_without_numbers).name)
-    elif int(warn_id_without_numbers) == int(msg['from_id']):
-      vk_session.method('messages.send', {
-        'chat_id': msg['peer_id'] - 2000000000,
-        'message': 'Вы не можете дать предупреждение самому себе!',
-        'random_id': 0
-      })
-    elif int(warn_id_without_numbers) in admin_keys:
-      vk_session.method('messages.send', {
+    if warn_id:
+      warn_id = warn_id.group(0)
+      warn_id_without_numbers = int(re.findall(r'\d+', warn_id)[0])
+      if int(warn_id_without_numbers) != int(msg['from_id']) and int(warn_id_without_numbers) not in admin_keys:
+        warn_user(vk_session, msg, warn_id_without_numbers, utils.get_user_by_id(warn_id_without_numbers).name)
+      elif int(warn_id_without_numbers) == int(msg['from_id']):
+        vk_session.method('messages.send', {
           'chat_id': msg['peer_id'] - 2000000000,
-          'message': 'Вы не можете дать предупреждение руководству!',
+          'message': 'Вы не можете дать предупреждение самому себе!',
           'random_id': 0
         })
+      elif int(warn_id_without_numbers) in admin_keys:
+        vk_session.method('messages.send', {
+            'chat_id': msg['peer_id'] - 2000000000,
+            'message': 'Вы не можете дать предупреждение руководству!',
+            'random_id': 0
+          })
+    else:
+      warn_id = None  # or handle the case as appropriate
+      vk_session.method('messages.send', {
+        'chat_id': msg['peer_id'] - 2000000000,
+        'message': 'Вы не указали никого!',
+        'random_id': 0
+      })
       
 ### REMOVE WARN
 def handle_remove_warn(vk_session, msg, members):
